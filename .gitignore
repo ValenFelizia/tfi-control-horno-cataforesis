@@ -1,0 +1,23 @@
+# Octave
+octave-workspace
+*.asv
+
+# Generated figures and exports
+figuras/*.png
+figuras/*.svg
+figuras/*.pdf
+informe/*.pdf
+output/
+
+# Office temporary files
+~$*.docx
+
+# Operating systems and editors
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Local workflow only (never publish)
+.csdd/
+cursor/
