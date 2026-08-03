@@ -6,9 +6,9 @@ curado de cataforesis automotriz.
 ## Estado
 
 El modelo matemático base y los parámetros están cerrados como supuestos
-académicos de diseño. El modelo nominal de planta abierta está implementado y
-verificado en Octave (`octave/run_all.m`). El siguiente paso es el diseño del
-controlador PI.
+académicos de diseño. El modelo nominal de planta abierta y el controlador PI
+están implementados y verificados en Octave (`octave/run_all.m`). El siguiente
+paso es la redacción del informe final.
 
 El año que debe figurar en el nombre del informe es el año de cursado:
 

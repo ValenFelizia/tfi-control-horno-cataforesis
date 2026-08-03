@@ -327,13 +327,13 @@ El ensayo de seguimiento queda definido como un incremento de referencia
 \]
 
 alrededor del punto nominal (\(T_{z0}=180\;^\circ\mathrm{C}\)). Equivale, por
-ejemplo, a pasar de 180 °C a 190 °C en temperatura física, pero la definición
+ejemplo, a pasar de 170 °C a 180 °C en temperatura física, pero la definición
 operativa del ensayo es el escalón incremental \(\Delta r\).
 
-Objetivos provisionales de lazo cerrado para este ensayo:
+Objetivos de lazo cerrado para este ensayo (verificados con el PI adoptado):
 
 - error estacionario: 0 °C;
-- sobrepasamiento máximo: 5 %;
+- sobrepasamiento máximo: 5 % (el nominal resulta 0 %);
 - tiempo de establecimiento: no más de 600 s con banda de ±5 %;
 - acción de control total: entre 0 y 100 %, sin saturación sostenida.
 
@@ -349,36 +349,176 @@ equivalente
 No representa el ingreso puntual de una única carrocería, sino una carga
 agrupada sostenida (carrocerías, carriers y renovación de aire).
 
-Objetivos provisionales de lazo cerrado para este ensayo:
+Objetivos de lazo cerrado para este ensayo (verificados con el PI adoptado):
 
 - desviación máxima de temperatura menor o igual a 5 °C;
 - retorno permanente a la banda de ±2 °C en no más de 600 s;
 - visualización explícita de la orden de control.
 
-Estos objetivos son provisionales de diseño. Siguen sujetos a verificación de
-realizabilidad con el PI (reserva de potencia y saturación).
+## 10. Diseño del controlador PI
 
-## 10. Controlador previsto
-
-Se propone un PI:
+Se adopta un PI en la forma
 
 \[
 C(s)=K_p+\frac{K_i}{s}
-=K_p\frac{T_is+1}{T_is}
+=K_p\frac{T_is+1}{T_is}.
 \]
 
-La acción integral es necesaria para eliminar el error estacionario frente a
-una carga térmica constante. La elección de \(K_p\), \(K_i\) y \(T_i\) queda
-pendiente del diseño explícito en la etapa del controlador.
-
-Una posibilidad a evaluar es ubicar el cero del PI en el polo térmico:
+### 10.1 Parámetros adoptados
 
 \[
-T_i=\tau_T
+T_i=\tau_T=600\;\mathrm{s},\qquad
+K_p=0{,}025\;\mathrm{p.u./^\circ C},\qquad
+K_i=\frac{K_p}{T_i}=4{,}1666666667\times10^{-5}\;\mathrm{p.u./(^\circ C\cdot s)}.
 \]
 
-No se adopta todavía como decisión. La cancelación sólo será aceptable si la
-acción de control y la robustez frente a incertidumbre resultan razonables.
+El cero del PI queda en \(-1/T_i=-1/600\;\mathrm{s^{-1}}\) y cancela
+**nominalmente** el polo térmico dominante estable de \(G_p\). La cancelación
+vale para el modelo asumido: no elimina físicamente la dinámica térmica ni
+demuestra robustez sobre el horno real.
+
+### 10.2 Lazo abierto compensado tras la cancelación nominal
+
+\[
+L(s)=C(s)G_p(s)
+=\frac{250K_p}{600s(10s+1)}.
+\]
+
+El integrador del PI hace que el lazo abierto compensado sea de **tipo 1**, lo
+que garantiza error estacionario nulo ante escalones de referencia y de carga
+constante (en el modelo lineal no saturado).
+
+La ecuación característica del **lazo nominal reducido** (tras la cancelación
+nominal del polo térmico) es
+
+\[
+6000s^2+600s+250K_p=0
+\qquad\Leftrightarrow\qquad
+s^2+0{,}1s+\frac{K_p}{24}=0.
+\]
+
+Con \(K_p=0{,}025\):
+
+\[
+\omega_n=\sqrt{\frac{K_p}{24}}=0{,}03227486\;\mathrm{rad/s},\qquad
+\zeta=\frac{0{,}1}{2\omega_n}=1{,}549193.
+\]
+
+Como \(\zeta>1\), la **realización mínima** de la transferencia nominal
+referencia–temperatura \(T(s)\) es de **segundo orden sobreamortiguada**. Sus
+polos son
+
+\[
+s_{1,2}=-0{,}08818813\;\mathrm{s^{-1}},\qquad
+-0{,}01181187\;\mathrm{s^{-1}}.
+\]
+
+Estos no son los únicos modos internos del sistema completo. El modelo
+aumentado con estados \(q_h\), \(\theta\) y \(\xi\) tiene los tres autovalores
+
+\[
+-0{,}08818813\;\mathrm{s^{-1}},\qquad
+-0{,}01181187\;\mathrm{s^{-1}},\qquad
+-\frac{1}{600}=-0{,}00166667\;\mathrm{s^{-1}}.
+\]
+
+El modo \(-1/600\) queda cancelado únicamente en el canal nominal
+referencia–temperatura; permanece estable internamente y aparece en la
+transferencia de perturbación \(T_d(s)\).
+
+### 10.3 Justificación de \(K_p\) por la acción de control
+
+Ante \(\Delta r=10\;^\circ\mathrm{C}\),
+
+\[
+v(0^+)=K_p\Delta r=0{,}25,\qquad
+u(0^+)=u_0+v(0^+)=0{,}95.
+\]
+
+Queda un margen de 0,05 p.u. hasta la saturación superior. La simulación
+confirma \(u_{\max}\approx 0{,}95035\) y \(u_{\mathrm{final}}=0{,}74\).
+
+### 10.4 Lugar de raíces del lazo nominal reducido
+
+Se define la planta de diseño sin la ganancia variable, correspondiente al
+lazo nominal **reducido tras la cancelación**:
+
+\[
+L_0(s)=\frac{250}{600s(10s+1)}.
+\]
+
+El lugar tiene polos en \(0\) y \(-0{,}1\), con punto de separación en
+\(-0{,}05\). La ganancia crítica correspondiente es \(K_p=0{,}06\).
+
+Para el polo lento de la realización mínima de \(T(s)\),
+\(s_d=-0{,}01181187\), la condición de módulo da
+
+\[
+K_p=\frac{1}{|L_0(s_d)|}=0{,}025.
+\]
+
+Los dos polos marcados en la figura son los de esa realización mínima
+referencia–temperatura, no el conjunto completo de autovalores internos.
+### 10.5 Funciones de transferencia de lazo cerrado
+
+\[
+T(s)=\frac{C(s)G_p(s)}{1+C(s)G_p(s)},\qquad
+S(s)=\frac{1}{1+C(s)G_p(s)},\qquad
+T_d(s)=G_L(s)S(s).
+\]
+
+\[
+\frac{V(s)}{R(s)}=\frac{C(s)}{1+C(s)G_p(s)},\qquad
+\frac{V(s)}{Q_L(s)}=-\frac{C(s)G_L(s)}{1+C(s)G_p(s)}.
+\]
+
+La realización mínima de \(T(s)\) tiene sólo los dos polos del lazo reducido.
+\(T_d(s)\) conserva además el polo térmico \(-1/600\), coherente con el modo
+interno no eliminado físicamente.
+### 10.6 Modelo con saturación (sin anti-windup)
+
+Además del modelo lineal se simula
+
+\[
+e=\Delta r-\theta,\quad
+v^*=K_pe+K_i\xi,\quad
+u=\mathrm{sat}(u_0+v^*,0,1),
+\]
+
+\[
+v=u-u_0,\quad
+\dot\xi=e,\quad
+\tau_a\dot q_h+q_h=K_av,\quad
+C_{th}\dot\theta=q_h-UA\theta-q_L.
+\]
+
+En los ensayos obligatorios la saturación permanece inactiva; lineal y
+saturado coinciden dentro de tolerancia numérica.
+
+### 10.7 Comparación con P puro
+
+Con el mismo \(K_p=0{,}025\) y sin integral, ante \(\Delta r=10\;^\circ\mathrm{C}\)
+
+\[
+e_\infty=\frac{10}{1+K_pG_p(0)}=1{,}37931\;^\circ\mathrm{C},
+\]
+
+y ante \(\Delta q_L=50\;\mathrm{kW}\)
+
+\[
+\theta_\infty=-3{,}44828\;^\circ\mathrm{C}.
+\]
+
+La acción integral es la que anula ambos errores estacionarios.
+
+### 10.8 Márgenes frecuenciales nominales de \(L(s)\)
+
+- frecuencia de cruce de ganancia: \(0{,}0103612\;\mathrm{rad/s}\);
+- margen de fase: \(84{,}0846^\circ\);
+- margen de ganancia: infinito (no hay cruce finito de fase por \(-180^\circ\)).
+
+Estos valores caracterizan únicamente el modelo nominal asumido; no prueban
+robustez industrial del horno real.
 
 ## 11. No linealidades y límites
 
@@ -389,16 +529,15 @@ acción de control y la robustez frente a incertidumbre resultan razonables.
 - Cambios de \(C_{th}\) y \(UA\) con la carga.
 - Lógica discreta de seguridad del quemador.
 
-La simulación mínima debe incorporar saturación. Las demás no linealidades se
-documentarán y sólo se agregarán si mejoran el análisis sin desviar el alcance.
+La simulación de lazo cerrado incorpora saturación. No se agrega anti-windup en
+esta etapa. Las demás no linealidades se documentan y sólo se agregan si
+mejoran el análisis sin desviar el alcance.
 
 ## 12. Próximas verificaciones
 
-1. Implementar y verificar el modelo nominal en Octave (planta abierta).
-2. Comparar \(G_p\) con \(G_{\mathrm{red}}\) ante \(\Delta v=0{,}04\).
-3. Diseñar el PI con una técnica explícita de la materia.
-4. Verificar realizabilidad de los objetivos de lazo cerrado y saturación.
-5. Comparar teoría y simulación del sistema compensado.
+1. Incorporar figuras y métricas del PI al informe según la Guía TFI V5.
+2. Redactar conclusiones técnicas comparando planta abierta, P y PI.
+3. Revisar unidades, bibliografía y procedencia de todos los parámetros.
 
 ## 13. Fuentes académicas usadas en esta etapa
 
@@ -409,4 +548,4 @@ documentarán y sólo se agregarán si mejoran el análisis sin desviar el alcan
 - Material de cátedra: *La función de transferencia de sistemas lineales*.
 - Material de cátedra: *Sistemas de segundo orden*.
 - Ortega, M. G. *Análisis de la respuesta transitoria*.
-
+- Material de cátedra sobre lugar de raíces y compensadores.

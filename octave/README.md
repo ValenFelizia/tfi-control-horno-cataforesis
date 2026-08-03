@@ -1,6 +1,6 @@
 # Octave
 
-Implementación del modelo nominal de planta abierta. Sin PI ni lazo cerrado.
+Modelo nominal de planta abierta y controlador PI de lazo cerrado.
 
 ## Estructura
 
@@ -10,10 +10,15 @@ parametros.m
 modelo_planta.m
 analisis_planta.m
 respuesta_planta.m
+diseno_controlador_pi.m
+simulacion_lazo_cerrado.m
 utils/
   save_fig.m
   settling_time.m
+  settling_time_abs.m
   rise_time_10_90.m
+  saturate.m
+  sim_planta_saturada.m
 ```
 
 ## Ejecución
@@ -29,7 +34,6 @@ octave-cli --no-gui run_all.m
 - centralizar parámetros en `parametros.m` (congelados, supuestos académicos);
 - guardar figuras de forma determinista en `../figuras/`;
 - etiquetar ejes con nombre y unidad;
-- ensayo físico de mando: `Δv = 0,04 p.u.` (no `v = 1`);
-- escalón unitario solo para verificar `dcgain(Gp) = 250`;
 - convenciones explícitas: rise time 10–90 %, settling time ±5 %;
-- no introducir PI, seguimiento cerrado, rechazo cerrado ni saturación dinámica.
+- la cancelación del polo térmico del PI es nominal (modelo asumido);
+- no agregar anti-windup en esta etapa.
