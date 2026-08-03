@@ -4,7 +4,7 @@
 
 **Estado:** modelo base cerrado (parámetros congelados como supuestos)  
 **Año de cursado:** segundo semestre de 2025  
-**Fecha de revisión:** 1 de agosto de 2026
+**Fecha de revisión:** 3 de agosto de 2026
 
 > Este documento concentra la matemática del proyecto antes de llevarla al
 > informe final. Los valores numéricos son supuestos académicos de diseño: no
@@ -237,8 +237,10 @@ G_p(s)=
 Con los valores provisionales:
 
 \[
-K=500000(5\times10^{-4})=250\;^\circ C/\mathrm{p.u.}
+K=500000(5\times10^{-4})=250
 \]
+
+La unidad de esta ganancia es °C/p.u.
 
 \[
 G_p(s)=
@@ -288,7 +290,7 @@ Por lo tanto:
 - no tiene ceros;
 - es de tipo 0;
 - el polo térmico \(p_2\) es dominante;
-- la ganancia estática es \(G_p(0)=250\;^\circ C/\mathrm{p.u.}\).
+- la ganancia estática es \(G_p(0)=250\) °C/p.u.
 
 Escrita en forma canónica de segundo orden,
 
@@ -296,13 +298,15 @@ Escrita en forma canónica de segundo orden,
 G_p(s)=\frac{K\,\omega_n^2}{s^2+2\zeta\omega_n s+\omega_n^2},
 \]
 
-con \(K=250\;^\circ C/\mathrm{p.u.}\) y
+con \(K=250\) °C/p.u. y
 
 \[
-\omega_n=\sqrt{\frac{1}{6000}}=0{,}0129099\;\mathrm{rad/s},
+\omega_n=\sqrt{\frac{1}{6000}}=0{,}0129099,
 \qquad
 \zeta=\frac{610}{2\sqrt{6000}}=3{,}93753.
 \]
+
+La frecuencia natural \(\omega_n\) está expresada en rad/s.
 
 Como \(\zeta>1\), la planta es de **segundo orden sobreamortiguada**.
 
@@ -323,10 +327,10 @@ G_{\mathrm{red}}(s)=\frac{250}{600s+1}.
 El ensayo de seguimiento queda definido como un incremento de referencia
 
 \[
-\Delta r=+10\;^\circ\mathrm{C}
+\Delta r=+10
 \]
 
-alrededor del punto nominal (\(T_{z0}=180\;^\circ\mathrm{C}\)). Equivale, por
+medido en °C, alrededor del punto nominal (\(T_{z0}=180\) °C). Equivale, por
 ejemplo, a pasar de 180 °C a 190 °C en temperatura física, pero la definición
 operativa del ensayo es el escalón incremental \(\Delta r\).
 
@@ -343,8 +347,10 @@ La perturbación queda definida como un aumento sostenido de carga térmica
 equivalente
 
 \[
-\Delta q_L=+50\;\mathrm{kW}.
+\Delta q_L=+50.
 \]
+
+El incremento de carga está expresado en kW.
 
 No representa el ingreso puntual de una única carrocería, sino una carga
 agrupada sostenida (carrocerías, carriers y renovación de aire).
@@ -368,9 +374,12 @@ C(s)=K_p+\frac{K_i}{s}
 
 \[
 T_i=\tau_T=600\;\mathrm{s},\qquad
-K_p=0{,}025\;\mathrm{p.u./^\circ C},\qquad
-K_i=\frac{K_p}{T_i}=4{,}1666666667\times10^{-5}\;\mathrm{p.u./(^\circ C\cdot s)}.
+K_p=0{,}025,\qquad
+K_i=\frac{K_p}{T_i}=4{,}1666666667\times10^{-5}.
 \]
+
+Las unidades de \(K_p\) y \(K_i\) son p.u./°C y p.u./(°C·s),
+respectivamente.
 
 El cero del PI queda en \(-1/T_i=-1/600\;\mathrm{s^{-1}}\) y cancela
 **nominalmente** el polo térmico dominante estable de \(G_p\). La cancelación
@@ -400,9 +409,11 @@ s^2+0{,}1s+\frac{K_p}{24}=0.
 Con \(K_p=0{,}025\):
 
 \[
-\omega_n=\sqrt{\frac{K_p}{24}}=0{,}03227486\;\mathrm{rad/s},\qquad
+\omega_n=\sqrt{\frac{K_p}{24}}=0{,}03227486,\qquad
 \zeta=\frac{0{,}1}{2\omega_n}=1{,}549193.
 \]
+
+La frecuencia natural de la realización mínima está expresada en rad/s.
 
 Como \(\zeta>1\), la **realización mínima** de la transferencia nominal
 referencia–temperatura \(T(s)\) es de **segundo orden sobreamortiguada**. Sus
@@ -428,7 +439,7 @@ transferencia de perturbación \(T_d(s)\).
 
 ### 10.3 Justificación de \(K_p\) por la acción de control
 
-Ante \(\Delta r=10\;^\circ\mathrm{C}\),
+Ante un escalón \(\Delta r=10\), medido en °C,
 
 \[
 v(0^+)=K_p\Delta r=0{,}25,\qquad
@@ -447,8 +458,9 @@ lazo nominal **reducido tras la cancelación**:
 L_0(s)=\frac{250}{600s(10s+1)}.
 \]
 
-El lugar tiene polos en \(0\) y \(-0{,}1\), con punto de separación en
-\(-0{,}05\). La ganancia crítica correspondiente es \(K_p=0{,}06\).
+El lugar tiene polos en \(0\) y \(-0{,}1\), con punto de dispersión en
+\(-0{,}05\), obtenido de \(dK/ds=0\). La ganancia correspondiente en ese
+punto es \(K_p=0{,}06\).
 
 Para el polo lento de la realización mínima de \(T(s)\),
 \(s_d=-0{,}01181187\), la condición de módulo da
@@ -459,6 +471,7 @@ K_p=\frac{1}{|L_0(s_d)|}=0{,}025.
 
 Los dos polos marcados en la figura son los de esa realización mínima
 referencia–temperatura, no el conjunto completo de autovalores internos.
+
 ### 10.5 Funciones de transferencia de lazo cerrado
 
 \[
@@ -475,6 +488,7 @@ T_d(s)=G_L(s)S(s).
 La realización mínima de \(T(s)\) tiene sólo los dos polos del lazo reducido.
 \(T_d(s)\) conserva además el polo térmico \(-1/600\), coherente con el modo
 interno no eliminado físicamente.
+
 ### 10.6 Modelo con saturación (sin anti-windup)
 
 Además del modelo lineal se simula
@@ -497,25 +511,28 @@ saturado coinciden dentro de tolerancia numérica.
 
 ### 10.7 Comparación con P puro
 
-Con el mismo \(K_p=0{,}025\) y sin integral, ante \(\Delta r=10\;^\circ\mathrm{C}\)
+Con el mismo \(K_p=0{,}025\) y sin integral, ante un escalón
+\(\Delta r=10\), medido en °C,
 
 \[
-e_\infty=\frac{10}{1+K_pG_p(0)}=1{,}37931\;^\circ\mathrm{C},
+e_\infty=\frac{10}{1+K_pG_p(0)}=1{,}37931,
 \]
 
-y ante \(\Delta q_L=50\;\mathrm{kW}\)
+en °C; y ante \(\Delta q_L=50\) kW,
 
 \[
-\theta_\infty=-3{,}44828\;^\circ\mathrm{C}.
+\theta_\infty=-3{,}44828.
 \]
+
+El último resultado también está expresado en °C.
 
 La acción integral es la que anula ambos errores estacionarios.
 
 ### 10.8 Márgenes frecuenciales nominales de \(L(s)\)
 
-- frecuencia de cruce de ganancia: \(0{,}0103612\;\mathrm{rad/s}\);
-- margen de fase: \(84{,}0846^\circ\);
-- margen de ganancia: infinito (no hay cruce finito de fase por \(-180^\circ\)).
+- frecuencia de cruce de ganancia: \(0{,}0103612\) rad/s;
+- margen de fase: 84,0846°;
+- margen de ganancia: infinito (no hay cruce finito de fase por -180°).
 
 Estos valores caracterizan únicamente el modelo nominal asumido; no prueban
 robustez industrial del horno real.

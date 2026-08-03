@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import shutil
 import subprocess
 import tempfile
 from pathlib import Path
@@ -194,7 +195,7 @@ def make_pandoc_source() -> str:
 title: "Cuaderno de modelado matemático"
 subtitle: "Control de temperatura de una zona equivalente de un horno de cataforesis"
 author: "Valentín Felizia"
-date: "Borrador técnico 0.1 | Cursado 2025 | 28 de julio de 2026"
+date: "Modelo nominal y PI | Cursado 2025 | Revisión 3 de agosto de 2026"
 lang: es-AR
 ---
 
@@ -317,12 +318,15 @@ def patch_document():
 
 def build():
     create_reference_docx()
+    pandoc = shutil.which("pandoc")
+    if pandoc is None:
+        raise RuntimeError("pandoc no está disponible en PATH")
     with tempfile.TemporaryDirectory(prefix="tfi_docx_") as temp_dir:
         temp_markdown = Path(temp_dir) / "modelo.md"
         temp_markdown.write_text(make_pandoc_source(), encoding="utf-8")
         subprocess.run(
             [
-                "/usr/bin/pandoc",
+                pandoc,
                 str(temp_markdown),
                 "--from=markdown+tex_math_dollars+tex_math_single_backslash",
                 "--to=docx",
