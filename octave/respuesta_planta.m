@@ -164,7 +164,7 @@ function check_metric(got, expected, tol_abs, name)
   err = abs(got - expected);
   fprintf('  check %s: |got-ref|=%.4f (tol abs=%.4f)\n', name, err, tol_abs);
   if err > tol_abs
-    warning('Diferencia en %s fuera de tolerancia de muestreo: got=%.4f ref=%.4f', ...
-            name, got, expected);
+    error('Diferencia en %s fuera de tolerancia de muestreo: got=%.4f ref=%.4f', ...
+          name, got, expected);
   end
 end

@@ -48,7 +48,7 @@ fprintf('ref settling ±5 %%    = %.2f s\n', met_cl.ref.ts);
 fprintf('ref u_max            = %.6f\n', met_cl.ref.u_max);
 fprintf('ref saturacion       = %d\n', met_cl.ref.any_sat);
 fprintf('dist theta_min       = %.5f degC\n', met_cl.dist.theta_min);
-fprintf('dist retorno ±2 %%    = %.2f s\n', met_cl.dist.t_pm2);
+fprintf('dist retorno ±2 degC  = %.2f s\n', met_cl.dist.t_pm2);
 fprintf('dist saturacion      = %d\n', met_cl.dist.any_sat);
 
 fprintf('\nVerificacion planta abierta + PI finalizada.\n');

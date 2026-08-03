@@ -46,8 +46,8 @@ function p = parametros()
   p.cl_wn_ref = 0.03227486;
   p.cl_zeta_ref = 1.549193;
   p.aug_eigs_ref = [-0.08818813; -0.01181187; -1/600];
-  p.breakaway_s_ref = -0.05;
-  p.Kp_breakaway_ref = 0.06;
+  p.dispersion_s_ref = -0.05;
+  p.Kp_dispersion_ref = 0.06;
   p.sd_ref = -0.01181187;
   p.Kp_modulus_ref = 0.025;
 
@@ -82,6 +82,10 @@ function p = parametros()
   p.tol_metric_C = 0.02;
   p.tol_metric_u = 5e-4;
   p.tol_lin_sat = 2e-3;
+  % Residuos admisibles al horizonte finito de simulacion. Los valores
+  % estacionarios se verifican por separado mediante dcgain.
+  p.tol_ref_horizon_C = 1e-3;
+  p.tol_dist_horizon_C = 0.05;
   p.t_final_s = 6000;
   p.t_final_cl_s = 3000;
 end

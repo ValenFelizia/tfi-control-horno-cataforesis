@@ -18,9 +18,10 @@ function ctl = diseno_controlador_pi(p, m)
 
   % T minima (canal referencia-temperatura tras cancelacion nominal)
   T = minreal(feedback(C * m.Gp, 1));
-  % S/Td sin forzar la cancelacion del modo termico en el canal de carga
-  S = feedback(1, C * m.Gp);
-  Td = m.GL * S;
+  % Sensibilidad minima del lazo nominal. Al multiplicarla por GL, Td conserva
+  % exactamente un polo termico adicional: el modo interno no cancelado.
+  S = minreal(feedback(1, C * m.Gp));
+  Td = minreal(m.GL * S);
   Vr = minreal(C / (1 + C * m.Gp));
   Vq = minreal(-(C * m.GL) / (1 + C * m.Gp));
 
@@ -77,12 +78,14 @@ function ctl = diseno_controlador_pi(p, m)
   end
 
   poles_Td = sort(real(pole(Td)));
-  has_thermal = any(abs(poles_Td + 1 / p.tau_T_s) < 1e-4);
   fprintf('Polos Td(s): ');
   fprintf('%.8f ', poles_Td);
   fprintf('\n');
-  assert(has_thermal, 'Td(s) debe conservar el polo termico -1/tau_T');
-  assert(numel(poles_Td) >= 3, 'Td(s) debe tener al menos 3 polos');
+  assert(numel(poles_Td) == 3, ...
+         'La realizacion minima de Td(s) debe tener exactamente 3 polos');
+  for k = 1:3
+    assert_rel(poles_Td(k), eigs_ref(k), 1e-4, sprintf('polo Td %d', k));
+  end
 
   % Condicion de modulo en s_d (polo lento de T minima)
   sd = p.sd_ref;
@@ -94,8 +97,26 @@ function ctl = diseno_controlador_pi(p, m)
   fprintf('|L0(sd)|=%.10g  => Kp=%.10g (ref 0.025)\n', abs(L0_sd), Kp_mod);
   assert_rel(Kp_mod, p.Kp_modulus_ref, 1e-4, 'condicion de modulo');
 
-  assert_rel(p.breakaway_s_ref, -0.05, p.tol_algebraic, 'breakaway');
-  assert_rel(p.Kp_breakaway_ref, 0.06, p.tol_algebraic, 'Kp breakaway');
+  % Punto de dispersion: K(s)=-D(s)/N(s), con dK/ds=0. Para L0 el
+  % numerador es constante, por lo que basta derivar -D(s)/N.
+  assert(numel(n0) == 1, 'L0 debe tener numerador constante');
+  dK_num = -polyder(d0) / n0(1);
+  dispersion_candidates = roots(dK_num);
+  poles_L0_real = sort(real(pole(L0)));
+  dispersion_candidates = real(dispersion_candidates(
+    abs(imag(dispersion_candidates)) < 1e-10 & ...
+    real(dispersion_candidates) > poles_L0_real(1) & ...
+    real(dispersion_candidates) < poles_L0_real(end)));
+  assert(numel(dispersion_candidates) == 1, ...
+         'Se esperaba un unico punto de dispersion entre los polos de L0');
+  s_dispersion = dispersion_candidates(1);
+  Kp_dispersion = -polyval(d0, s_dispersion) / polyval(n0, s_dispersion);
+  fprintf('Punto de dispersion: s=%.8f  Kp=%.8f\n', ...
+          s_dispersion, Kp_dispersion);
+  assert_rel(s_dispersion, p.dispersion_s_ref, p.tol_algebraic, ...
+             'punto de dispersion');
+  assert_rel(Kp_dispersion, p.Kp_dispersion_ref, p.tol_algebraic, ...
+             'Kp en punto de dispersion');
 
   v0 = p.Kp * p.dr_C;
   u0p = p.u0_pu + v0;
@@ -134,13 +155,14 @@ function ctl = diseno_controlador_pi(p, m)
   hold on;
   plot(real(poles_Tmin), imag(poles_Tmin), 'ks', 'MarkerSize', 9, ...
        'MarkerFaceColor', 'y', 'LineWidth', 1.5);
-  plot(p.breakaway_s_ref, 0, 'md', 'MarkerSize', 8, 'MarkerFaceColor', 'm');
+  plot(s_dispersion, 0, 'md', 'MarkerSize', 8, 'MarkerFaceColor', 'm');
   grid on;
   title(sprintf(['Lugar de raices del lazo nominal reducido L_0(s)\n', ...
                  '(tras cancelacion; polos de T minima) (%s)'], note));
   xlabel('Re [1/s]');
   ylabel('Im [1/s]');
-  legend('lugar de raices', 'polos de T_{min} (Kp=0.025)', 'separacion (-0.05)', ...
+  legend('lugar de raices', 'polos de T_{min} (Kp=0.025)', ...
+         'punto de dispersion (-0.05)', ...
          'Location', 'southwest');
   save_fig(fig5, '05_lugar_raices_PI');
   close(fig5);
@@ -157,7 +179,7 @@ function ctl = diseno_controlador_pi(p, m)
   ctl.L = L;
   ctl.L0 = L0;
   ctl.T = T;
-  ctl.S = minreal(S);
+  ctl.S = S;
   ctl.Td = Td;
   ctl.Vr = Vr;
   ctl.Vq = Vq;

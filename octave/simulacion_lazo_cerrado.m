@@ -25,17 +25,19 @@ function met = simulacion_lazo_cerrado(p, m, ctl)
 
   sat_ref = sim_planta_saturada(p, t, dr, 0);
 
-  th_inf = 1 * dr;  % dcgain(T)=1
+  th_inf = dcgain(ctl.T) * dr;
   amp = th_inf;
   OS_pct = 100 * max(0, (max(th_pi) - th_inf) / abs(amp));
   tr = rise_time_10_90(t, th_pi, 0, th_inf);
   ts = settling_time(t, th_pi, th_inf, 0.05);
-  e_inf = th_inf - th_pi(end);
+  e_inf = dr * (1 - dcgain(ctl.T));
+  e_horizon = dr - th_pi(end);
   u_max = max(u_pi);
   u_final = p.u0_pu + dcgain(ctl.Vr) * dr;
 
   fprintf('\nEnsayo referencia Delta r = +%.0f degC (PI):\n', dr);
-  fprintf('  e_inf ~ %.3e degC\n', abs(dr - th_pi(end)));
+  fprintf('  e_inf analitico = %.3e degC\n', e_inf);
+  fprintf('  residuo en t=%.0f s = %.3e degC\n', t(end), e_horizon);
   fprintf('  overshoot = %.4f %% (ref %.1f)\n', OS_pct, p.ref_OS_pct_ref);
   fprintf('  rise time 10-90 %% = %.2f s (ref %.1f)\n', tr, p.ref_tr_10_90_s_ref);
   fprintf('  settling ±5 %% = %.2f s (ref %.1f)\n', ts, p.ref_ts_5pct_s_ref);
@@ -44,7 +46,9 @@ function met = simulacion_lazo_cerrado(p, m, ctl)
   fprintf('  saturacion activa = %d\n', sat_ref.any_sat);
 
   assert_rel(dcgain(ctl.T), 1, p.tol_algebraic, 'dcgain(T) en sim');
-  assert_abs(abs(dr - th_pi(end)), 0, max(1e-2, 5 * p.dt_s), 'error estacionario sim');
+  assert_abs(e_inf, 0, p.tol_algebraic, 'error estacionario analitico');
+  assert_abs(e_horizon, 0, p.tol_ref_horizon_C, ...
+             'residuo de referencia al horizonte finito');
   check_metric(OS_pct, p.ref_OS_pct_ref, 0.05, 'ref overshoot');
   check_metric(tr, p.ref_tr_10_90_s_ref, p.tol_metric_s, 'ref rise time');
   check_metric(ts, p.ref_ts_5pct_s_ref, p.tol_metric_s, 'ref settling');
@@ -67,21 +71,24 @@ function met = simulacion_lazo_cerrado(p, m, ctl)
   t_min = t(idx_min);
   t_pm2 = settling_time_abs(t, th_d, 0, p.dist_band_C);
   u_final_d = p.u0_pu + dcgain(ctl.Vq) * dqL;
+  theta_inf_d = dcgain(ctl.Td) * dqL;
 
   fprintf('\nEnsayo perturbacion Delta qL = +%.0f kW (PI):\n', dqL / 1000);
   fprintf('  theta_min = %.5f degC (ref %.4f)\n', theta_min, p.dist_theta_min_ref);
   fprintf('  t_min = %.2f s (ref %.1f)\n', t_min, p.dist_t_min_s_ref);
   fprintf('  retorno a ±%.0f degC = %.2f s (ref %.1f)\n', p.dist_band_C, t_pm2, p.dist_t_pm2_s_ref);
-  fprintf('  theta(inf) sim = %.5f degC\n', th_d(end));
+  fprintf('  theta(inf) analitico = %.3e degC\n', theta_inf_d);
+  fprintf('  residuo en t=%.0f s = %.5f degC\n', t(end), th_d(end));
   fprintf('  u_final analitico = %.6f (ref %.2f)\n', u_final_d, p.dist_ufinal_ref);
   fprintf('  saturacion activa = %d\n', sat_dist.any_sat);
 
   check_metric(theta_min, p.dist_theta_min_ref, p.tol_metric_C, 'dist theta_min');
   check_metric(t_min, p.dist_t_min_s_ref, p.tol_metric_s, 'dist t_min');
   check_metric(t_pm2, p.dist_t_pm2_s_ref, p.tol_metric_s, 'dist retorno ±2');
-  assert_abs(abs(th_d(end)), 0, max(1e-2, 5 * p.dt_s), 'dist theta(inf)');
+  assert_abs(theta_inf_d, 0, 1e-8, 'dist theta(inf) analitico');
+  assert_abs(th_d(end), 0, p.tol_dist_horizon_C, ...
+             'residuo de perturbacion al horizonte finito');
   assert_rel(u_final_d, p.dist_ufinal_ref, p.tol_algebraic, 'dist u_final');
-  assert_abs(dcgain(ctl.Td) * dqL, 0, 1e-8, 'dcgain(Td)*dqL');
   assert(theta_min >= -5 - p.tol_metric_C, 'Desviacion maxima excede 5 degC');
   assert(t_pm2 <= 600 + p.tol_metric_s, 'Retorno a ±2 degC excede 600 s');
   assert(~sat_dist.any_sat, 'Saturacion inesperada en ensayo de perturbacion');
