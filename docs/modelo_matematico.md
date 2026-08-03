@@ -327,7 +327,7 @@ El ensayo de seguimiento queda definido como un incremento de referencia
 \]
 
 alrededor del punto nominal (\(T_{z0}=180\;^\circ\mathrm{C}\)). Equivale, por
-ejemplo, a pasar de 170 °C a 180 °C en temperatura física, pero la definición
+ejemplo, a pasar de 180 °C a 190 °C en temperatura física, pero la definición
 operativa del ensayo es el escalón incremental \(\Delta r\).
 
 Objetivos de lazo cerrado para este ensayo (verificados con el PI adoptado):
