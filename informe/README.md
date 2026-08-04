@@ -1,11 +1,20 @@
 # Informe final
 
-Nombre de entrega obligatorio:
+Nombre de entrega obligatorio: `Felizia.TFI.SCI2025.pdf`. El año corresponde
+al cursado, no al momento de presentación.
 
-`Felizia.TFI.SCI2025.pdf`
+`informe.md` conserva la fuente textual reproducible y
+`Felizia.TFI.SCI2025.docx` es la versión editable maquetada. Para reconstruir
+el DOCX deben existir las figuras generadas por `octave/run_all.m` y el
+diagrama funcional `figuras/00_diagrama_bloques.png`.
 
-El año corresponde al cursado, no al momento de presentación.
+```bash
+python scripts/build_informe.py
+```
 
-El informe final se generará cuando el modelo y el controlador hayan sido
-verificados. La fuente matemática preliminar vive en `../docs/`.
+Requisitos de construcción: Python con `python-docx`, Pandoc y las figuras
+regeneradas previamente desde Octave.
 
+El script genera una base editable. Los ajustes finales de portada, índice y
+maquetación se conservan en `Felizia.TFI.SCI2025.docx`; la entrega se exporta a
+PDF con Microsoft Word o LibreOffice y se revisa visualmente antes de su envío.
