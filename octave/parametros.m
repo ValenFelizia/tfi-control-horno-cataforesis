@@ -29,6 +29,8 @@ function p = parametros()
 
   % Controlador PI adoptado (cancelacion nominal del polo termico)
   p.Kp = 0.025;                         % p.u. / degC
+  % Limite de actuacion para Delta r = 10 C: Kp*dr <= 1-u0 => Kp <= 0.03
+  p.Kp_max_actuation = (1 - p.u0_pu) / p.dr_C;
   p.Ti_s = p.tau_T_s;                   % 600 s
   p.Ki = p.Kp / p.Ti_s;                 % p.u. / (degC * s)
   p.u_min_pu = 0;
@@ -76,12 +78,15 @@ function p = parametros()
   p.P_theta_inf_dist_ref = -3.44828;
 
   % Tolerancias y grilla temporal
-  p.tol_algebraic = 1e-6;
+  p.tol_algebraic = 1e-6;               % identidades exactas (equilibrio, dcgain)
+  % 1e-4 / 1e-5: refs redondeadas del cuaderno vs float de Octave
+  p.tol_rounded_ref = 1e-4;
+  p.tol_derived = 1e-5;
   p.dt_s = 0.1;
-  p.tol_metric_s = 5 * p.dt_s;
-  p.tol_metric_C = 0.02;
-  p.tol_metric_u = 5e-4;
-  p.tol_lin_sat = 2e-3;
+  p.tol_metric_s = 5 * p.dt_s;          % ~5 muestras de la grilla temporal
+  p.tol_metric_C = 0.02;                % resolucion practica de temperatura
+  p.tol_metric_u = 5e-4;                % u_max reportado a 5 digitos
+  p.tol_lin_sat = 2e-3;                 % RK4 dt=0.1 vs step() exacto del paquete control
   % Residuos admisibles al horizonte finito de simulacion. Los valores
   % estacionarios se verifican por separado mediante dcgain.
   p.tol_ref_horizon_C = 1e-3;

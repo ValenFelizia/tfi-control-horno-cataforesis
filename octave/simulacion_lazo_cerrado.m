@@ -12,7 +12,7 @@ function met = simulacion_lazo_cerrado(p, m, ctl)
   t = (0:p.dt_s:p.t_final_cl_s)';
   dr = p.dr_C;
   dqL = p.dqL_W;
-  note = 'Parametros: supuestos academicos de diseno (congelados)';
+  note = 'supuestos academicos (congelados)';
 
   % ---------- Referencia: lineal PI / P y saturado PI ----------
   [th_pi, ~] = step(dr * ctl.T, t);
@@ -105,7 +105,7 @@ function met = simulacion_lazo_cerrado(p, m, ctl)
   plot([t(1), t(end)], [dr, dr], 'k:', 'LineWidth', 1.0);
   grid on;
   ylabel('\theta [°C]');
-  title(sprintf('Referencia \\Delta r=+10 °C: P vs PI (%s)', note));
+  title(sprintf('\\Delta r = +10 °C: P vs PI\n%s', note));
   legend('PI lineal', 'PI + sat', 'P puro', '\Delta r', 'Location', 'southeast');
   xlim([0, 1500]);
 
@@ -138,7 +138,7 @@ function met = simulacion_lazo_cerrado(p, m, ctl)
   plot([t(1), t(end)], [0, 0], 'k:', 'LineWidth', 1.0, 'HandleVisibility', 'off');
   grid on;
   ylabel('\theta [°C]');
-  title(sprintf('Perturbacion \\Delta q_L=+50 kW (PI) (%s)', note));
+  title(sprintf('\\Delta q_L = +50 kW (PI)\n%s', note));
   legend('\theta PI lineal', '\theta PI + sat', 'banda \pm2 °C', 'Location', 'southeast');
   xlim([0, 1500]);
 

@@ -75,7 +75,7 @@ function met = respuesta_planta(p, m)
   assert_rel_local(theta_L(end), theta_L_inf, tol_trunc, 'theta simulado vs analitico por qL');
 
   % --- Figuras ---
-  fig_dir_note = 'Parametros: supuestos academicos de diseno (congelados)';
+  note = 'supuestos academicos (congelados)';
 
   % 01: step planta Gp con Delta v = 0.04
   fig1 = figure();
@@ -88,7 +88,7 @@ function met = respuesta_planta(p, m)
   grid on;
   xlabel('t [s]');
   ylabel('\theta [°C]');
-  title(sprintf('Planta abierta G_p: \\Delta v = %.2f p.u. (%s)', dv, fig_dir_note));
+  title(sprintf('Planta abierta G_p, \\Delta v = %.2f p.u.\n%s', dv, note));
   legend('\theta(t)', 'banda settling \pm5 %', 'Location', 'southeast');
   xlim([0, min(p.t_final_s, 5000)]);
   save_fig(fig1, '01_step_planta_Gp');
@@ -101,10 +101,14 @@ function met = respuesta_planta(p, m)
   hold on;
   plot(0, 0, 'k+', 'HandleVisibility', 'off');
   grid on;
-  axis equal;
+  re = real(pz);
+  pad_x = 0.05;
+  pad_y = 0.05;
+  xlim([min(re) - pad_x, max(re) + pad_x]);
+  ylim([-pad_y, pad_y]);
   xlabel('Re [1/s]');
   ylabel('Im [1/s]');
-  title(sprintf('Polos de G_p (%s)', fig_dir_note));
+  title(sprintf('Polos de G_p\n%s', note));
   legend('polos', 'Location', 'northeast');
   save_fig(fig2, '02_polos_planta');
   close(fig2);
@@ -117,7 +121,7 @@ function met = respuesta_planta(p, m)
   grid on;
   xlabel('t [s]');
   ylabel('\theta [°C]');
-  title(sprintf('Perturbacion abierta: \\Delta q_L = +50 kW (%s)', fig_dir_note));
+  title(sprintf('Perturbacion abierta \\Delta q_L = +%.0f kW\n%s', p.dqL_W / 1000, note));
   legend('\theta(t)', '\theta(\infty)', 'Location', 'northeast');
   xlim([0, min(p.t_final_s, 5000)]);
   save_fig(fig3, '03_step_perturbacion_GL');
@@ -132,7 +136,7 @@ function met = respuesta_planta(p, m)
   grid on;
   xlabel('t [s]');
   ylabel('\theta [°C]');
-  title(sprintf('G_p vs G_{red}=250/(600s+1), \\Delta v=%.2f p.u.', dv));
+  title(sprintf('G_p vs G_{red}, \\Delta v = %.2f p.u.\n%s', dv, note));
   legend('G_p completa', 'G_{red} primer orden', 'Location', 'southeast');
   xlim([0, min(p.t_final_s, 5000)]);
   save_fig(fig4, '04_Gp_vs_Gred');
