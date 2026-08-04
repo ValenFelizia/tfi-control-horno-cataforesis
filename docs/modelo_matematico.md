@@ -71,10 +71,11 @@ mediante un primer orden:
 \tau_a\frac{dQ_h(t)}{dt}+Q_h(t)=K_a u(t)
 \]
 
-Con condiciones iniciales nulas en variables incrementales:
+Con condiciones iniciales nulas en el modelo incremental
+(\(q_h\leftrightarrow Q_h\), \(v\leftrightarrow V\)):
 
 \[
-G_a(s)=\frac{Q_h(s)}{U(s)}
+G_a(s)=\frac{Q_h(s)}{V(s)}
 =\frac{K_a}{\tau_a s+1}
 \]
 
@@ -197,6 +198,18 @@ El modelo es lineal mientras la orden total \(u=u_0+v\) no alcance sus
 límites y los parámetros equivalentes se mantengan aproximadamente constantes.
 
 ## 7. Funciones de transferencia
+
+Tras la linealización, todas las transferencias relacionan **desviaciones**
+alrededor del equilibrio. Se denota con mayúscula la transformada de Laplace
+de cada señal incremental:
+
+\[
+\theta(t)\leftrightarrow\Theta(s),\quad
+v(t)\leftrightarrow V(s),\quad
+q_h(t)\leftrightarrow Q_h(s),\quad
+q_L(t)\leftrightarrow Q_L(s),\quad
+\theta_{amb}(t)\leftrightarrow\Theta_{amb}(s).
+\]
 
 Aplicando Laplace con condiciones iniciales nulas:
 
@@ -439,39 +452,50 @@ transferencia de perturbación \(T_d(s)\).
 
 ### 10.3 Justificación de \(K_p\) por la acción de control
 
-Ante un escalón \(\Delta r=10\), medido en °C,
+El criterio primario de elección de \(K_p\) es el margen de actuación ante el
+ensayo de referencia. Con \(\Delta r=10\;^\circ\mathrm{C}\) y \(u_0=0{,}70\),
 
 \[
-v(0^+)=K_p\Delta r=0{,}25,\qquad
-u(0^+)=u_0+v(0^+)=0{,}95.
+v(0^+)=K_p\Delta r,\qquad
+u(0^+)=u_0+v(0^+)=u_0+K_p\Delta r.
 \]
 
-Queda un margen de 0,05 p.u. hasta la saturación superior. La simulación
-confirma \(u_{\max}\approx 0{,}95035\) y \(u_{\mathrm{final}}=0{,}74\).
-
-### 10.4 Lugar de raíces del lazo nominal reducido
-
-Se define la planta de diseño sin la ganancia variable, correspondiente al
-lazo nominal **reducido tras la cancelación**:
+Para no saturar en el instante inicial hace falta \(u(0^+)\le 1\), es decir
 
 \[
-L_0(s)=\frac{250}{600s(10s+1)}.
+K_p\le\frac{1-u_0}{\Delta r}=0{,}03\;\mathrm{p.u./^\circ C}.
+\]
+
+Se adopta \(K_p=0{,}025\) **dentro** de ese límite, de modo que
+\(v(0^+)=0{,}25\) y \(u(0^+)=0{,}95\), dejando 0,05 p.u. de margen a la
+saturación superior. La simulación confirma \(u_{\max}\approx 0{,}95035\) y
+\(u_{\mathrm{final}}=0{,}74\).
+
+### 10.4 Verificaciones en el lugar de raíces del lazo nominal reducido
+
+Una vez fijado \(K_p\) por actuación, se verifican a posteriori la ubicación de
+polos, el lugar de raíces y la condición de módulo. Se define la planta de
+diseño sin la ganancia variable, correspondiente al lazo nominal **reducido
+tras la cancelación**:
+
+\[
+L_0(s)=\frac{K}{\tau_T s(\tau_a s+1)}
+=\frac{250}{600s(10s+1)}.
 \]
 
 El lugar tiene polos en \(0\) y \(-0{,}1\), con punto de dispersión en
 \(-0{,}05\), obtenido de \(dK/ds=0\). La ganancia correspondiente en ese
-punto es \(K_p=0{,}06\).
+punto es \(K_p=0{,}06\) (mayor que la adoptada).
 
 Para el polo lento de la realización mínima de \(T(s)\),
-\(s_d=-0{,}01181187\), la condición de módulo da
+\(s_d=-0{,}01181187\), la condición de módulo **confirma** el valor adoptado:
 
 \[
-K_p=\frac{1}{|L_0(s_d)|}=0{,}025.
+\frac{1}{|L_0(s_d)|}=0{,}025=K_p.
 \]
 
 Los dos polos marcados en la figura son los de esa realización mínima
 referencia–temperatura, no el conjunto completo de autovalores internos.
-
 ### 10.5 Funciones de transferencia de lazo cerrado
 
 \[
