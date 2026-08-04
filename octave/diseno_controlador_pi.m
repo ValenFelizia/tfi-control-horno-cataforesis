@@ -92,6 +92,15 @@ function ctl = diseno_controlador_pi(p, m)
   [n0, d0] = tfdata(L0);
   if iscell(n0); n0 = n0{1}; end
   if iscell(d0); d0 = d0{1}; end
+  % Algunas versiones de Octave/control rellenan el numerador con ceros
+  % lideres hasta igualar el orden del denominador (p. ej. [0 0 250]).
+  % Quitarlos antes de comprobar que L0 tiene numerador constante.
+  n0 = n0(:).';
+  d0 = d0(:).';
+  n0_tol = 100 * eps * max(1, norm(n0, Inf));
+  first_n0 = find(abs(n0) > n0_tol, 1, 'first');
+  assert(~isempty(first_n0), 'L0 no puede tener numerador nulo');
+  n0 = n0(first_n0:end);
   L0_sd = polyval(n0(:).', sd) / polyval(d0(:).', sd);
   Kp_mod = 1 / abs(L0_sd);
   fprintf('|L0(sd)|=%.10g  => Kp=%.10g (ref 0.025)\n', abs(L0_sd), Kp_mod);
