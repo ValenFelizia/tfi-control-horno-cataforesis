@@ -6,7 +6,10 @@ octave-workspace
 figuras/*.png
 figuras/*.svg
 figuras/*.pdf
+# El diagrama funcional es una fuente del informe, no una salida de Octave.
+!figuras/00_diagrama_bloques.png
 informe/*.pdf
+!informe/Felizia.TFI.SCI2025.pdf
 output/
 
 # Office temporary files
