@@ -16,7 +16,8 @@ from docx.shared import Inches, Pt, RGBColor
 
 ROOT = Path(__file__).resolve().parents[1]
 SOURCE = ROOT / "informe" / "informe.md"
-OUTPUT = ROOT / "informe" / "Felizia.TFI.SCI2025.docx"
+# Generación desde Markdown: nunca sobrescribe el entregable maquetado.
+OUTPUT = ROOT / "informe" / "Felizia.TFI.SCI2025.generated.docx"
 REFERENCE = ROOT / "output" / "informe_reference.docx"
 
 BLUE = RGBColor(46, 116, 181)
