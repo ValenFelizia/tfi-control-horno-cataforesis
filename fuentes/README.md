@@ -4,7 +4,6 @@ Los PDFs de la cátedra no se incluyen en el repositorio inicial. Copiarlos
 localmente aquí si se necesita consulta offline:
 
 - `2025 Guía de Elaboración del Trabajo Integrador de Sistemas de Control V5.pdf`
-- `Bernardi-Ledesma.TFI.SCI2024.pdf`
 - `4-SCI-MM Termico.pdf`
 - `3-SC1-FT 1.pdf`
 - `5-SC1-RT 2.pdf`

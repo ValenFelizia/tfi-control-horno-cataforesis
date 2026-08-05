@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import os
 import shutil
 import subprocess
 import tempfile
@@ -346,14 +347,22 @@ def build():
                 "--number-sections",
                 f"--reference-doc={REFERENCE}",
                 "--resource-path",
-                str(ROOT / "informe") + ":" + str(ROOT),
+                str(ROOT / "informe") + os.pathsep + str(ROOT),
                 "--output",
                 str(draft),
             ],
             check=True,
             cwd=ROOT,
         )
-        shutil.copy2(draft, OUTPUT)
+        try:
+            shutil.copy2(draft, OUTPUT)
+        except PermissionError:
+            alt = OUTPUT.with_name(OUTPUT.stem + "_nuevo.docx")
+            shutil.copy2(draft, alt)
+            raise PermissionError(
+                f"No se pudo sobrescribir {OUTPUT.name} (archivo abierto). "
+                f"Se generó {alt.name}; cerrá Word y renombralo."
+            ) from None
 
     patch_document(OUTPUT)
     print(OUTPUT)

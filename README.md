@@ -7,8 +7,9 @@ curado de cataforesis automotriz.
 
 El modelo matemático base y los parámetros están cerrados como supuestos
 académicos de diseño. El modelo nominal de planta abierta y el controlador PI
-están implementados y verificados en Octave (`octave/run_all.m`). El siguiente
-paso es la redacción del informe final.
+están implementados y verificados en Octave (`octave/run_all.m`). El informe
+final está terminado: fuente en `informe/informe.md`, entregables
+`informe/Felizia.TFI.SCI2025.docx` y `informe/Felizia.TFI.SCI2025.pdf`.
 
 El año que debe figurar en el nombre del informe es el año de cursado:
 

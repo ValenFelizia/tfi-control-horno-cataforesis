@@ -576,9 +576,9 @@ mejoran el análisis sin desviar el alcance.
 
 ## 12. Próximas verificaciones
 
-1. Incorporar figuras y métricas del PI al informe según la Guía TFI V5.
-2. Redactar conclusiones técnicas comparando planta abierta, P y PI.
-3. Revisar unidades, bibliografía y procedencia de todos los parámetros.
+1. Revisar visualmente la paginación del PDF de entrega antes del envío formal.
+2. Mantener sincronizados `informe/informe.md`, DOCX y PDF ante cualquier
+   corrección documental posterior.
 
 ## 13. Fuentes académicas usadas en esta etapa
 

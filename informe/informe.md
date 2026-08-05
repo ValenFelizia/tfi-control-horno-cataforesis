@@ -82,10 +82,11 @@ una función relevante del proceso.
 
 Un horno real tiene varias zonas, circulación de aire, combustión, transporte
 de carrocerías y distribuciones espaciales de temperatura. Modelar cada uno de
-esos fenómenos excede el alcance de Sistemas de Control I. En este trabajo se
-adopta una zona térmica equivalente, de parámetros concentrados, cuya salida es
-la temperatura del aire. La energía absorbida por carrocerías, carriers y
-renovación de aire se agrupa como una perturbación de carga.
+esos fenómenos excede el alcance de Sistemas de Control I y, por lo tanto, de
+este Trabajo Final Integrador. En este trabajo se adopta una zona térmica
+equivalente, de parámetros concentrados, cuya salida es la temperatura del
+aire. La energía absorbida por carrocerías, carriers y renovación de aire se
+agrupa como una perturbación de carga.
 
 El objetivo es integrar las etapas clásicas de un problema de control:
 
@@ -681,9 +682,6 @@ señaladas previamente.
   Sistemas de Control I, FCEFyN, Universidad Nacional de Córdoba.
 - Agüero, A. *Respuesta en frecuencia*. Material de la cátedra Sistemas de
   Control I, FCEFyN, Universidad Nacional de Córdoba.
-- Bernardi, M. y Ledesma, I. (2024). *Controlador de velocidad para una cinta
-  transportadora*. Trabajo Final Integrador de Sistemas de Control I. Usado
-  únicamente como referencia de estructura y profundidad.
 - Departamento de Electrónica, FCEFyN, Universidad Nacional de Córdoba.
   *La función de transferencia de sistemas lineales*. Material de Sistemas de
   Control I.
